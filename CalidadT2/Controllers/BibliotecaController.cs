@@ -14,13 +14,11 @@ namespace CalidadT2.Controllers
     [Authorize]
     public class BibliotecaController : Controller
     {
-        private readonly AppBibliotecaContext app;
         private IBibliotecaRepository bibliotecaRepository;
         private IAuthRepository authRepository;
 
-        public BibliotecaController(AppBibliotecaContext app, IBibliotecaRepository bibliotecaRepository, IAuthRepository authRepository)
+        public BibliotecaController(IBibliotecaRepository bibliotecaRepository, IAuthRepository authRepository)
         {
-            this.app = app;
             this.bibliotecaRepository = bibliotecaRepository;
             this.authRepository = authRepository;
         }
@@ -45,8 +43,7 @@ namespace CalidadT2.Controllers
                 Estado = ESTADO.POR_LEER
             };
 
-            app.Bibliotecas.Add(biblioteca);
-            app.SaveChanges();
+            bibliotecaRepository.Add(biblioteca);
 
             TempData["SuccessMessage"] = "Se añádio el libro a su biblioteca";
 
@@ -58,12 +55,8 @@ namespace CalidadT2.Controllers
         {
             Usuario user = LoggedUser();
 
-            var libro = app.Bibliotecas
-                .Where(o => o.LibroId == libroId && o.UsuarioId == user.Id)
-                .FirstOrDefault();
-
-            libro.Estado = ESTADO.LEYENDO;
-            app.SaveChanges();
+            var libro = bibliotecaRepository.Buscar(libroId, user);
+            bibliotecaRepository.MarcarComoLeyendo(libro);
 
             TempData["SuccessMessage"] = "Se marco como leyendo el libro";
 
@@ -75,12 +68,8 @@ namespace CalidadT2.Controllers
         {
             Usuario user = LoggedUser();
 
-            var libro = app.Bibliotecas
-                .Where(o => o.LibroId == libroId && o.UsuarioId == user.Id)
-                .FirstOrDefault();
-
-            libro.Estado = ESTADO.TERMINADO;
-            app.SaveChanges();
+            var libro = bibliotecaRepository.Buscar(libroId, user);
+            bibliotecaRepository.MarcarComoTerminado(libro);
 
             TempData["SuccessMessage"] = "Se marco como leyendo el libro";
 
