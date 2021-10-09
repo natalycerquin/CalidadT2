@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using CalidadT2.Models;
+using CalidadT2.Repository;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,20 +10,22 @@ namespace CalidadT2.Controllers
     public class LibroController : Controller
     {
         private readonly AppBibliotecaContext app;
+        private ILibroRepository libroRepository;
+        private IComentarioRepository comentarioRepository;
+        private IAuthRepository authRepository;
 
-        public LibroController(AppBibliotecaContext app)
+        public LibroController(AppBibliotecaContext app, IAuthRepository authRepository,ILibroRepository libroRepository, IComentarioRepository comentarioRepository)
         {
             this.app = app;
+            this.libroRepository = libroRepository;
+            this.comentarioRepository = comentarioRepository;
+            this.authRepository = authRepository;
         }
 
         [HttpGet]
         public IActionResult Details(int id)
         {
-            var model = app.Libros
-                .Include("Autor")
-                .Include("Comentarios.Usuario")
-                .Where(o => o.Id == id)
-                .FirstOrDefault();
+            var model = this.libroRepository.Buscar(id);
             return View(model);
         }
 
@@ -32,12 +35,10 @@ namespace CalidadT2.Controllers
             Usuario user = LoggedUser();
             comentario.UsuarioId = user.Id;
             comentario.Fecha = DateTime.Now;
-            app.Comentarios.Add(comentario);
+            comentarioRepository.AddComentario(comentario);
 
-            var libro = app.Libros.Where(o => o.Id == comentario.LibroId).FirstOrDefault();
-            libro.Puntaje = (libro.Puntaje + comentario.Puntaje) / 2;
-
-            app.SaveChanges();
+            var libro = libroRepository.Buscar(comentario.LibroId);
+            libroRepository.ActualizarPuntaje(libro, comentario);
 
             return RedirectToAction("Details", new { id = comentario.LibroId });
         }
@@ -45,7 +46,7 @@ namespace CalidadT2.Controllers
         private Usuario LoggedUser()
         {
             var claim = HttpContext.User.Claims.FirstOrDefault();
-            var user = app.Usuarios.Where(o => o.Username == claim.Value).FirstOrDefault();
+            var user = authRepository.GetUserLogged(claim);
             return user;
         }
     }

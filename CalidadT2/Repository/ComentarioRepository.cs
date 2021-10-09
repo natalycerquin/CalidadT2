@@ -8,7 +8,7 @@ namespace CalidadT2.Repository
 {
     public interface IComentarioRepository
     {
-        public void AddComentario();
+        public void AddComentario(Comentario comentario);
     }
 
 
@@ -21,7 +21,7 @@ namespace CalidadT2.Repository
             this.context = context;
         }
 
-        public void AddComentario()
+        public void AddComentario(Comentario comentario)
         {
         }
     }
