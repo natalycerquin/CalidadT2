@@ -13,12 +13,10 @@ namespace CalidadT2.Controllers
 {
     public class AuthController : Controller
     {
-        private readonly AppBibliotecaContext app;
         private readonly IUsuarioRepository usuarioRepository;
 
-        public AuthController(AppBibliotecaContext app, IUsuarioRepository usuarioRepository)
+        public AuthController(IUsuarioRepository usuarioRepository)
         {
-            this.app = app;
             this.usuarioRepository = usuarioRepository;
         }
 
