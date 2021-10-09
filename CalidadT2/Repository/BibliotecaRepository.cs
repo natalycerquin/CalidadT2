@@ -1,4 +1,5 @@
 ﻿using CalidadT2.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ namespace CalidadT2.Repository
 
     public interface IBibliotecaRepository
     {
-        public void Listar();
+        public List<Biblioteca> Listar(Usuario usuario);
         public void Buscar(int Id);
         public void Add();
         public void MarcarComoLeyendo();
@@ -25,8 +26,15 @@ namespace CalidadT2.Repository
             this.context = context;
         }
 
-        public void Listar()
+        public List<Biblioteca> Listar(Usuario usuario)
         {
+            var model = context.Bibliotecas
+                .Include(o => o.Libro.Autor)
+                .Include(o => o.Usuario)
+                .Where(o => o.UsuarioId == usuario.Id)
+                .ToList();
+
+            return model;
         }
 
         public void Buscar(int Id) {

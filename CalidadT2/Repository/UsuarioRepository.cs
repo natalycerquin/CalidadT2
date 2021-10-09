@@ -9,7 +9,8 @@ namespace CalidadT2.Repository
 
     public interface IUsuarioRepository
     {
-        public Usuario Buscar(string username, string password);
+        public Usuario IniciarSesion(string username, string password);
+        public Usuario Buscar(string username);
     }
 
     public class UsuarioRepository : IUsuarioRepository
@@ -21,9 +22,16 @@ namespace CalidadT2.Repository
             this.context = context;
         }
 
-        public Usuario Buscar(string username, string password)
+        public Usuario IniciarSesion(string username, string password)
         {
-            throw new NotImplementedException();
+            var usuario = context.Usuarios.Where(o => o.Username == username && o.Password == password).FirstOrDefault();
+            return usuario;
+        }
+
+        public Usuario Buscar(string username)
+        {
+            var usuario = context.Usuarios.Where(o => o.Username == username).FirstOrDefault();
+            return usuario;
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using CalidadT2.Models;
+using CalidadT2.Repository;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
@@ -13,10 +14,12 @@ namespace CalidadT2.Controllers
     public class AuthController : Controller
     {
         private readonly AppBibliotecaContext app;
+        private readonly IUsuarioRepository usuarioRepository;
 
-        public AuthController(AppBibliotecaContext app)
+        public AuthController(AppBibliotecaContext app, IUsuarioRepository usuarioRepository)
         {
             this.app = app;
+            this.usuarioRepository = usuarioRepository;
         }
 
         [HttpGet]
@@ -28,7 +31,8 @@ namespace CalidadT2.Controllers
         [HttpPost]
         public IActionResult Login(string username, string password)
         {
-            var usuario = app.Usuarios.Where(o => o.Username == username && o.Password == password).FirstOrDefault();
+            var usuario = usuarioRepository.IniciarSesion(username, password);
+
             if (usuario != null)
             {
                 var claims = new List<Claim> {
