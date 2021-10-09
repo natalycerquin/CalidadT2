@@ -20,6 +20,7 @@ namespace CalidadT2.Repository
         public AuthRepository(AppBibliotecaContext context, IUsuarioRepository usuarioRepository)
         {
             this.context = context;
+            this.usuarioRepository = usuarioRepository;
         }
 
         public Usuario GetUserLogged(Claim claim)

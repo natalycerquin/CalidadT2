@@ -36,6 +36,7 @@ namespace CalidadT2.Repository
         {
             libro.Puntaje = (libro.Puntaje + comentario.Puntaje) / 2;
             context.SaveChanges();
+            return libro;
         }
     }
 }

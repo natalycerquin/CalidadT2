@@ -13,9 +13,9 @@ namespace CalidadT2.Repository
     {
         public List<Biblioteca> Listar(Usuario usuario);
         public Biblioteca Buscar(int Id, Usuario usuario);
-        public void Add(Biblioteca biblioteca);
-        public void MarcarComoLeyendo(Biblioteca libro);
-        public void MarcarComoTerminado(Biblioteca libro);
+        public Biblioteca Add(Biblioteca biblioteca);
+        public void MarcarComoLeyendo(Biblioteca biblioteca);
+        public void MarcarComoTerminado(Biblioteca biblioteca);
     }
 
     public class BibliotecaRepository : IBibliotecaRepository
@@ -45,21 +45,22 @@ namespace CalidadT2.Repository
             return model;
         }
 
-        public void Add(Biblioteca biblioteca)
+        public Biblioteca Add(Biblioteca biblioteca)
         {
             context.Bibliotecas.Add(biblioteca);
             context.SaveChanges();
+            return biblioteca;
         }
 
-        public void MarcarComoLeyendo(Biblioteca libro)
+        public void MarcarComoLeyendo(Biblioteca biblioteca)
         {
-            libro.Estado = ESTADO.LEYENDO;
+            biblioteca.Estado = ESTADO.LEYENDO;
             context.SaveChanges();
         }
 
-        public void MarcarComoTerminado(Biblioteca libro)
+        public void MarcarComoTerminado(Biblioteca biblioteca)
         {
-            libro.Estado = ESTADO.TERMINADO;
+            biblioteca.Estado = ESTADO.TERMINADO;
             context.SaveChanges();
         }
     }
